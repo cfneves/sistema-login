@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistema de Login</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .logo-icon {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, #e94560, #0f3460);
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 12px;
+    }
+    .logo h1 { color: #fff; font-size: 1.4rem; font-weight: 700; }
+    .logo p  { color: rgba(255,255,255,0.45); font-size: 0.85rem; margin-top: 4px; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .tab-btn.active {
+      background: #e94560;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(233,69,96,0.4);
+    }
+
+    /* Panels */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* Fields */
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 7px;
+    }
+    .field input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color .2s, background .2s;
+    }
+    .field input:focus {
+      border-color: #e94560;
+      background: rgba(255,255,255,0.1);
+    }
+    .field input::placeholder { color: rgba(255,255,255,0.25); }
+
+    /* Button */
+    .btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #e94560, #c0392b);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn:hover  { opacity: .9; }
+    .btn:active { transform: scale(.98); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    /* Alert */
+    .alert {
+      margin-top: 16px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      display: none;
+    }
+    .alert.success { background: rgba(46,213,115,.15); color: #2ed573; border: 1px solid rgba(46,213,115,.3); }
+    .alert.error   { background: rgba(233,69,96,.15);  color: #e94560; border: 1px solid rgba(233,69,96,.3); }
+    .alert.show    { display: block; }
+
+    /* Welcome screen */
+    .welcome {
+      display: none;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .welcome.show { display: block; }
+    .welcome-icon { font-size: 3rem; margin-bottom: 12px; }
+    .welcome h2   { color: #fff; font-size: 1.3rem; margin-bottom: 8px; }
+    .welcome p    { color: rgba(255,255,255,0.5); font-size: 0.88rem; margin-bottom: 24px; }
+    .btn-outline {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-outline:hover { border-color: #e94560; color: #e94560; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">🔐</div>
+      <h1>Sistema de Login</h1>
+      <p>Acesse ou crie sua conta</p>
+    </div>
+
+    <!-- Welcome screen (shown after login) -->
+    <div class="welcome" id="welcome">
+      <div class="welcome-icon">🎉</div>
+      <h2 id="welcome-msg">Login realizado!</h2>
+      <p id="welcome-sub">Você está autenticado com sucesso.</p>
+      <button class="btn-outline" onclick="sair()">Sair</button>
+    </div>
+
+    <!-- Auth panels -->
+    <div id="auth-area">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="trocarAba('login')">Entrar</button>
+        <button class="tab-btn"        onclick="trocarAba('cadastro')">Cadastrar</button>
+      </div>
+
+      <!-- Login -->
+      <div class="panel active" id="panel-login">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="seu@email.com"/>
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="login-senha" placeholder="••••••••" onkeydown="if(event.key==='Enter') fazerLogin()"/>
+        </div>
+        <button class="btn" onclick="fazerLogin()">Entrar</button>
+        <div class="alert" id="login-alert"></div>
+      </div>
+
+      <!-- Cadastro -->
+      <div class="panel" id="panel-cadastro">
+        <div class="field">
+          <label>Nome</label>
+          <input type="text" id="cad-nome" placeholder="Seu nome completo"/>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="cad-email" placeholder="seu@email.com"/>
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="cad-senha" placeholder="Mínimo 6 caracteres" onkeydown="if(event.key==='Enter') fazerCadastro()"/>
+        </div>
+        <button class="btn" onclick="fazerCadastro()">Criar conta</button>
+        <div class="alert" id="cad-alert"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function trocarAba(aba) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) =>
+        b.classList.toggle('active', (aba === 'login') ? i === 0 : i === 1)
+      );
+      document.getElementById('panel-login').classList.toggle('active', aba === 'login');
+      document.getElementById('panel-cadastro').classList.toggle('active', aba === 'cadastro');
+      limparAlertas();
+    }
+
+    function mostrarAlerta(id, mensagem, tipo) {
+      const el = document.getElementById(id);
+      el.textContent = mensagem;
+      el.className = `alert ${tipo} show`;
+    }
+
+    function limparAlertas() {
+      document.querySelectorAll('.alert').forEach(a => a.className = 'alert');
+    }
+
+    async function fazerLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const senha = document.getElementById('login-senha').value;
+      if (!email || !senha) { mostrarAlerta('login-alert', 'Preencha todos os campos.', 'error'); return; }
+
+      const btn = document.querySelector('#panel-login .btn');
+      btn.disabled = true;
+      btn.textContent = 'Entrando...';
+
+      const res  = await fetch('/login', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({email, senha}) });
+      const data = await res.json();
+
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+
+      if (data.ok) {
+        document.getElementById('auth-area').style.display = 'none';
+        document.getElementById('welcome-msg').textContent = 'Bem-vindo de volta!';
+        document.getElementById('welcome-sub').textContent = data.mensagem;
+        document.getElementById('welcome').classList.add('show');
+      } else {
+        mostrarAlerta('login-alert', data.mensagem, 'error');
+      }
+    }
+
+    async function fazerCadastro() {
+      const nome  = document.getElementById('cad-nome').value.trim();
+      const email = document.getElementById('cad-email').value.trim();
+      const senha = document.getElementById('cad-senha').value;
+      if (!nome || !email || !senha) { mostrarAlerta('cad-alert', 'Preencha todos os campos.', 'error'); return; }
+
+      const btn = document.querySelector('#panel-cadastro .btn');
+      btn.disabled = true;
+      btn.textContent = 'Criando conta...';
+
+      const res  = await fetch('/cadastrar', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({nome, email, senha}) });
+      const data = await res.json();
+
+      btn.disabled = false;
+      btn.textContent = 'Criar conta';
+
+      mostrarAlerta('cad-alert', data.mensagem, data.ok ? 'success' : 'error');
+      if (data.ok) {
+        setTimeout(() => trocarAba('login'), 1500);
+      }
+    }
+
+    function sair() {
+      document.getElementById('welcome').classList.remove('show');
+      document.getElementById('auth-area').style.display = '';
+      document.getElementById('login-email').value = '';
+      document.getElementById('login-senha').value = '';
+      limparAlertas();
+    }
+  </script>
+</body>
+</html>
