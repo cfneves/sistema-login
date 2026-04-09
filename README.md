@@ -1,6 +1,10 @@
 # Sistema de Login
 
-Sistema de autenticação com cadastro e login de usuários, desenvolvido em Python seguindo o padrão arquitetural **MVC**. Possui duas interfaces: CLI (terminal) e Web (Flask + HTML/CSS/JS).
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://sistema-app-cfn.streamlit.app/)
+
+Sistema de autenticação com cadastro e login de usuários, desenvolvido em Python seguindo o padrão arquitetural **MVC**. Possui três interfaces: CLI (terminal), Web (Flask + HTML/CSS/JS) e Streamlit.
+
+**Demo ao vivo:** [https://sistema-app-cfn.streamlit.app/](https://sistema-app-cfn.streamlit.app/)
 
 ---
 
@@ -11,7 +15,8 @@ Sistema de autenticação com cadastro e login de usuários, desenvolvido em Pyt
 | Linguagem | Python 3.x |
 | Banco de dados | SQLite via SQLAlchemy 2.x |
 | Backend web | Flask 3.x |
-| Frontend | HTML5 + CSS3 + JavaScript (vanilla) |
+| Frontend Web | HTML5 + CSS3 + JavaScript (vanilla) |
+| Frontend Streamlit | Streamlit 1.x |
 | Hash de senhas | SHA-256 (`hashlib`) |
 
 ---
@@ -24,6 +29,7 @@ Sistema de autenticação com cadastro e login de usuários, desenvolvido em Pyt
 ├── controller.py     # Camada Controller — regras de negócio, validação, hash
 ├── view.py           # Interface CLI — menu interativo no terminal
 ├── app.py            # Servidor Flask — API REST + serve o frontend web
+├── streamlit_app.py  # Interface Streamlit — glassmorphism dark, deploy na nuvem
 ├── templates/
 │   └── index.html    # Interface Web — SPA com design glassmorphism
 └── requirements.txt
@@ -34,19 +40,21 @@ Sistema de autenticação com cadastro e login de usuários, desenvolvido em Pyt
 ## Arquitetura MVC
 
 ```
-┌─────────────┐     ┌──────────────────┐     ┌───────────────┐
-│   VIEW      │────▶│   CONTROLLER     │────▶│    MODEL      │
-│             │     │                  │     │               │
-│ view.py     │     │ ControllerCadastro│    │ Pessoa (ORM)  │
-│ index.html  │     │ ControllerLogin  │     │ SQLite DB     │
-│ app.py      │     │ Resultado (Enum) │     │               │
-└─────────────┘     └──────────────────┘     └───────────────┘
+┌──────────────────┐     ┌──────────────────┐     ┌───────────────┐
+│      VIEW        │────▶│   CONTROLLER     │────▶│    MODEL      │
+│                  │     │                  │     │               │
+│ view.py (CLI)    │     │ ControllerCadastro│    │ Pessoa (ORM)  │
+│ index.html (Web) │     │ ControllerLogin  │     │ SQLite DB     │
+│ app.py (Flask)   │     │ Resultado (Enum) │     │               │
+│ streamlit_app.py │     │ _hash_senha()    │     │               │
+└──────────────────┘     └──────────────────┘     └───────────────┘
 ```
 
 - **Model** (`model.py`) — define a entidade `Pessoa` e a conexão com o banco. O `engine` e `Session` são criados uma única vez (singleton).
 - **Controller** (`controller.py`) — toda a lógica de negócio: validação de dados, hash de senhas, consultas ao banco. Retorna o `IntEnum Resultado` em vez de magic numbers.
 - **View CLI** (`view.py`) — loop de menu no terminal que consome o controller.
 - **View Web** (`app.py` + `index.html`) — servidor Flask que expõe o controller como API REST; o frontend é uma SPA em HTML/JS puro.
+- **View Streamlit** (`streamlit_app.py`) — interface web com deploy em nuvem, mesmo design glassmorphism dark, sem necessidade de servidor próprio.
 
 ---
 
@@ -72,13 +80,25 @@ Digite 2 para Logar
 Digite 3 para sair
 ```
 
-### Interface Web
+### Interface Web (Flask)
 
 ```bash
 python app.py
 ```
 
 Acesse **http://127.0.0.1:5000** no navegador.
+
+### Interface Streamlit (local)
+
+```bash
+streamlit run streamlit_app.py
+```
+
+Acesse **http://localhost:8501** no navegador.
+
+### Interface Streamlit (nuvem)
+
+Acesse diretamente: **[https://sistema-app-cfn.streamlit.app/](https://sistema-app-cfn.streamlit.app/)**
 
 ---
 
