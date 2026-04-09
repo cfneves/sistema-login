@@ -28,8 +28,8 @@ Sistema de autenticação com cadastro e login de usuários, desenvolvido em Pyt
 ├── model.py          # Camada Model — ORM SQLAlchemy, tabela Pessoa
 ├── controller.py     # Camada Controller — regras de negócio, validação, hash
 ├── view.py           # Interface CLI — menu interativo no terminal
-├── app.py            # Servidor Flask — API REST + serve o frontend web
-├── streamlit_app.py  # Interface Streamlit — glassmorphism dark, deploy na nuvem
+├── flask_flask_app.py      # Servidor Flask — API REST + serve o frontend web
+├── streamlit_flask_app.py  # Interface Streamlit — glassmorphism dark, deploy na nuvem
 ├── templates/
 │   └── index.html    # Interface Web — SPA com design glassmorphism
 └── requirements.txt
@@ -45,16 +45,16 @@ Sistema de autenticação com cadastro e login de usuários, desenvolvido em Pyt
 │                  │     │                  │     │               │
 │ view.py (CLI)    │     │ ControllerCadastro│    │ Pessoa (ORM)  │
 │ index.html (Web) │     │ ControllerLogin  │     │ SQLite DB     │
-│ app.py (Flask)   │     │ Resultado (Enum) │     │               │
-│ streamlit_app.py │     │ _hash_senha()    │     │               │
+│ flask_app.py (Flask)   │     │ Resultado (Enum) │     │               │
+│ streamlit_flask_app.py │     │ _hash_senha()    │     │               │
 └──────────────────┘     └──────────────────┘     └───────────────┘
 ```
 
 - **Model** (`model.py`) — define a entidade `Pessoa` e a conexão com o banco. O `engine` e `Session` são criados uma única vez (singleton).
 - **Controller** (`controller.py`) — toda a lógica de negócio: validação de dados, hash de senhas, consultas ao banco. Retorna o `IntEnum Resultado` em vez de magic numbers.
 - **View CLI** (`view.py`) — loop de menu no terminal que consome o controller.
-- **View Web** (`app.py` + `index.html`) — servidor Flask que expõe o controller como API REST; o frontend é uma SPA em HTML/JS puro.
-- **View Streamlit** (`streamlit_app.py`) — interface web com deploy em nuvem, mesmo design glassmorphism dark, sem necessidade de servidor próprio.
+- **View Web** (`flask_app.py` + `index.html`) — servidor Flask que expõe o controller como API REST; o frontend é uma SPA em HTML/JS puro.
+- **View Streamlit** (`streamlit_flask_app.py`) — interface web com deploy em nuvem, mesmo design glassmorphism dark, sem necessidade de servidor próprio.
 
 ---
 
@@ -83,7 +83,7 @@ Digite 3 para sair
 ### Interface Web (Flask)
 
 ```bash
-python app.py
+python flask_app.py
 ```
 
 Acesse **http://127.0.0.1:5000** no navegador.
@@ -91,7 +91,7 @@ Acesse **http://127.0.0.1:5000** no navegador.
 ### Interface Streamlit (local)
 
 ```bash
-streamlit run streamlit_app.py
+streamlit run streamlit_flask_app.py
 ```
 
 Acesse **http://localhost:8501** no navegador.

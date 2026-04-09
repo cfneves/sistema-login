@@ -3,7 +3,7 @@
 ## O que é este projeto
 
 Sistema de autenticação (cadastro + login) em Python com padrão MVC.
-Duas interfaces: CLI (`view.py`) e Web (`app.py` + `templates/index.html`).
+Duas interfaces: CLI (`view.py`) e Web (`flask_app.py` + `templates/index.html`).
 
 ## Stack
 
@@ -17,7 +17,7 @@ Duas interfaces: CLI (`view.py`) e Web (`app.py` + `templates/index.html`).
 | `model.py` | ORM: classe `Pessoa`, `engine` e `Session` (singleton) |
 | `controller.py` | Regras de negócio: `ControllerCadastro`, `ControllerLogin`, `Resultado` (IntEnum), `_hash_senha()` |
 | `view.py` | Interface CLI com menu loop |
-| `app.py` | Flask: rotas `GET /`, `POST /cadastrar`, `POST /login` |
+| `flask_app.py` | Flask: rotas `GET /`, `POST /cadastrar`, `POST /login` |
 | `templates/index.html` | SPA frontend com glassmorphism dark theme |
 
 ## Decisões de design importantes
@@ -27,13 +27,13 @@ Duas interfaces: CLI (`view.py`) e Web (`app.py` + `templates/index.html`).
 - Validação de inputs ocorre **antes** da consulta ao banco em `cadastrar()`.
 - Consultas usam `.first()` (não `.all()`) — evita carregar todas as linhas.
 - Sessions sempre fechadas via `finally: session.close()`.
-- `app.py` é apenas uma casca Flask — toda lógica fica no controller.
+- `flask_app.py` é apenas uma casca Flask — toda lógica fica no controller.
 
 ## Como rodar
 
 ```bash
 pip install -r requirements.txt
-python app.py        # web: http://127.0.0.1:5000
+python flask_app.py        # web: http://127.0.0.1:5000
 python view.py       # CLI
 ```
 
@@ -43,4 +43,4 @@ python view.py       # CLI
 - Não usar `.all()` onde `.first()` basta.
 - Não comparar resultados do controller com inteiros literais — usar `Resultado.SUCESSO` etc.
 - Não armazenar senhas em texto puro — sempre passar por `_hash_senha()`.
-- Não adicionar lógica de negócio em `app.py` — pertence ao controller.
+- Não adicionar lógica de negócio em `flask_app.py` — pertence ao controller.
